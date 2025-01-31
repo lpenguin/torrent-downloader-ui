@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Config } from '../types/config';
+import { useApi } from '../services/api-service';
 
 interface UseTorrentActionsResult {
   deleteTorrent: (hash: string) => Promise<void>;
@@ -10,24 +11,14 @@ interface UseTorrentActionsResult {
 export function useTorrentActions(config: Config): UseTorrentActionsResult {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const api = useApi(config);
 
   const deleteTorrent = async (hash: string) => {
     setLoading(true);
     setError(null);
 
     try {
-      const credentials = btoa(`${config.username}:${config.password}`);
-      const response = await fetch(`${config.apiRootUrl}/torrents/${hash}/delete`, {
-        method: 'DELETE',
-        headers: {
-          'Authorization': `Basic ${credentials}`,
-          'Content-Type': 'application/json',
-        },
-      });
-
-      if (!response.ok) {
-        throw new Error(`Failed to delete torrent: ${response.statusText}`);
-      }
+      await api.deleteTorrent(hash);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to delete torrent');
       throw err;

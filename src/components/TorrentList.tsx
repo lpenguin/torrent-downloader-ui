@@ -56,33 +56,30 @@ export function TorrentList({ torrents, loading, error, config, onTorrentAction 
 
   return (
     <>
-      <div className="bg-white shadow-sm rounded-lg overflow-hidden">
-        <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-gray-50">
-            <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Name
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Status
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Progress
-              </th>
-            </tr>
-          </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
+      <div className="bg-white shadow-sm rounded-lg">
+        <div className="bg-gray-50 flex divide-x divide-gray-200">
+          <div className="w-[50%] px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+            Name
+          </div>
+          <div className="w-[20%] px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+            Status
+          </div>
+          <div className="w-[30%] px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+            Progress
+          </div>
+        </div>
+        <div className="divide-y divide-gray-200">
             {torrents.map((torrent) => (
-              <tr key={torrent.sha256Hash}>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="text-sm font-medium text-gray-900">
+              <div key={torrent.sha256Hash} className="flex divide-x divide-gray-200">
+                <div className="w-[50%] px-6 py-4">
+                  <div className="text-sm font-medium text-gray-900 truncate overflow-hidden">
                     {torrent.torrentName}
                   </div>
                   <div className="text-sm text-gray-500">
                     {torrent.sha256Hash.substring(0, 8)}
                   </div>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap">
+                </div>
+                <div className="w-[20%] px-6 py-4 whitespace-nowrap">
                   <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full
                     ${torrent.status?.downloadComplete 
                       ? 'bg-green-100 text-green-800'
@@ -99,8 +96,8 @@ export function TorrentList({ torrents, loading, error, config, onTorrentAction 
                       {torrent.status.error}
                     </div>
                   )}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                </div>
+                <div className="w-[30%] px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {torrent.status?.downloadComplete ? (
                     <div className="text-green-600">
                       Download complete
@@ -167,11 +164,10 @@ export function TorrentList({ torrents, loading, error, config, onTorrentAction 
                       </div>
                     </div>
                   )}
-                </td>
-              </tr>
+                </div>
+              </div>
             ))}
-          </tbody>
-        </table>
+        </div>
       </div>
 
       {selectedTorrent && selectedTorrent.status?.files && (
