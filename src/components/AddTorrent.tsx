@@ -24,7 +24,7 @@ export function AddTorrent({ config, onSuccess }: AddTorrentProps) {
       const formData = new FormData();
       formData.append('file', file);
 
-      const response = await fetch(`${config.apiRootUrl}/`, {
+      const response = await fetch(`${config.apiRootUrl}/upload`, {
         method: 'POST',
         headers: {
           'Authorization': `Basic ${credentials}`,
