@@ -2,18 +2,35 @@ import { useState } from 'react';
 import { Torrent } from '../types/torrent';
 import { FileList } from './FileList';
 import { LogsDialog } from './LogsDialog';
+import { useTorrentActions } from '../hooks/useTorrentActions';
+import { Config } from '../types/config';
 
 interface TorrentListProps {
   torrents: Torrent[];
   loading: boolean;
   error: string | null;
+  config: Config;
+  onTorrentAction: () => void;
 }
 
-export function TorrentList({ torrents, loading, error }: TorrentListProps) {
+export function TorrentList({ torrents, loading, error, config, onTorrentAction }: TorrentListProps) {
   const [selectedTorrent, setSelectedTorrent] = useState<Torrent | null>(null);
   const [logsForTorrent, setLogsForTorrent] = useState<Torrent | null>(null);
 
-  if (loading) {
+  const { deleteTorrent, loading: actionLoading } = useTorrentActions(config);
+
+  const handleDelete = async (hash: string) => {
+    if (window.confirm('Are you sure you want to delete this torrent? This will stop the download and remove all files.')) {
+      try {
+        await deleteTorrent(hash);
+        onTorrentAction();
+      } catch (err) {
+        console.error('Failed to delete torrent:', err);
+      }
+    }
+  };
+
+  if (loading || actionLoading) {
     return (
       <div className="flex justify-center items-center p-8">
         <div className="text-gray-500">Loading torrents...</div>
@@ -112,6 +129,12 @@ export function TorrentList({ torrents, loading, error }: TorrentListProps) {
                             Download
                           </a>
                         )}
+                        <button
+                          onClick={() => handleDelete(torrent.sha256Hash)}
+                          className="text-xs font-medium text-red-600 hover:text-red-900 bg-red-50 px-2 py-1 rounded"
+                        >
+                          Delete
+                        </button>
                       </div>
                     </div>
                   ) : (
@@ -127,12 +150,20 @@ export function TorrentList({ torrents, loading, error }: TorrentListProps) {
                         </div>
                       )}
                       <div className="flex gap-2 mt-1">
-                        <button
-                          onClick={() => setLogsForTorrent(torrent)}
-                          className="text-xs font-medium text-indigo-600 hover:text-indigo-900 bg-indigo-50 px-2 py-1 rounded"
-                        >
-                          Logs
-                        </button>
+                        <div className="flex gap-2">
+                          <button
+                            onClick={() => setLogsForTorrent(torrent)}
+                            className="text-xs font-medium text-indigo-600 hover:text-indigo-900 bg-indigo-50 px-2 py-1 rounded"
+                          >
+                            Logs
+                          </button>
+                          <button
+                            onClick={() => handleDelete(torrent.sha256Hash)}
+                            className="text-xs font-medium text-red-600 hover:text-red-900 bg-red-50 px-2 py-1 rounded"
+                          >
+                            Delete
+                          </button>
+                        </div>
                       </div>
                     </div>
                   )}

@@ -32,7 +32,13 @@ function App() {
                     </button>
                   </div>
                 </div>
-                <TorrentList torrents={torrents} loading={loading} error={error} />
+                <TorrentList 
+                  torrents={torrents} 
+                  loading={loading} 
+                  error={error}
+                  config={config}
+                  onTorrentAction={refetch}
+                />
               </div>
             } />
             <Route path="*" element={<Navigate to="/" replace />} />
