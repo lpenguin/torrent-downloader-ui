@@ -14,7 +14,7 @@ function App() {
   }
 
   return (
-    <Router>
+    <Router basename="/torrent-downloader-ui">
       <div className="min-h-screen bg-gray-100">
         <div className="container mx-auto px-4 py-8">
           <Routes>

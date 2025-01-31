@@ -8,36 +8,44 @@ export function useTorrents(config: Config) {
   const [error, setError] = useState<string | null>(null);
 
   const fetchTorrents = async () => {
-      try {
-        setError(null);
-        const credentials = btoa(`${config.username}:${config.password}`);
-        const response = await fetch(`${config.apiRootUrl}/torrents`, {
-          headers: {
-            'Authorization': `Basic ${credentials}`,
-          },
-        });
+    if (!config.apiRootUrl) {
+      setLoading(false);
+      return;
+    }
 
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
+    try {
+      setError(null);
+      const credentials = btoa(`${config.username}:${config.password}`);
+      const response = await fetch(`${config.apiRootUrl}/torrents`, {
+        headers: {
+          'Authorization': `Basic ${credentials}`,
+        },
+      });
 
-        const data = await response.json();
-        setTorrents(data);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'Failed to fetch torrents');
-      } finally {
-        setLoading(false);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
       }
-    };
+
+      const data = await response.json();
+      setTorrents(data);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to fetch torrents');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    // Initial fetch
-    fetchTorrents();
+    if (config.apiRootUrl) {
+      // Initial fetch
+      fetchTorrents();
 
-    // Set up polling every 5 seconds
-    const interval = setInterval(fetchTorrents, 5000);
-
-    return () => clearInterval(interval);
+      // Set up polling every 5 seconds
+      const interval = setInterval(fetchTorrents, 5000);
+      return () => clearInterval(interval);
+    } else {
+      setLoading(false);
+    }
   }, [config.apiRootUrl, config.username, config.password]);
 
   const refetch = () => {

@@ -7,6 +7,15 @@ export interface TaskStatus {
     error?: string;
     downloadComplete: boolean;
     downloadPath?: string;
+    downloadUrl?: string;
+    files?: DownloadedFile[];
+    logs?: string[];
+}
+
+export interface DownloadedFile {
+    name: string;
+    path: string;
+    url?: string;
 }
 
 export interface Torrent {
