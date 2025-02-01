@@ -27,7 +27,7 @@ export function LogsDialog({ logs, isOpen, onClose }: LogsDialogProps) {
             <p className="text-gray-500 text-center">No logs available</p>
           ) : (
             <div className="font-mono text-sm whitespace-pre-wrap bg-gray-50 p-4 rounded">
-              {logs.map((log, index) => (
+              {logs.reverse().map((log, index) => (
                 <div key={index} className="py-1">
                   {log}
                 </div>
